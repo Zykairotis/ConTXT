@@ -1,3 +1,6 @@
 .codeiumignore
 .cursorignore
 GEMINI.md
+BACKEND.md
+FRONTEND.md
+.gitignore
