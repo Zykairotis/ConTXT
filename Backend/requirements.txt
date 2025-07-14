@@ -1,0 +1,31 @@
+# Core Framework & Server
+fastapi
+uvicorn
+gunicorn
+pydantic
+python-dotenv
+
+# AI, LLM Orchestration & RAG
+langchain
+langgraph
+litellm
+tiktoken
+cognee @ git+https://github.com/topoteretes/cognee.git
+
+# Data & Document Processing
+unstructured[pdf]
+yt-dlp
+moviepy
+pandas
+Pillow
+opencv-python
+marker-pdf @ git+https://github.com/datalab-to/marker.git
+
+# Database & Storage
+psycopg2-binary
+redis
+neo4j
+
+# Task Queuing
+celery
+flower
