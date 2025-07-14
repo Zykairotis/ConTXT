@@ -139,18 +139,7 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
     onVideosChange(videos.filter((video) => video.id !== videoId))
   }
 
-  const getStatusColor = (status: VideoSource["status"]) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800"
-      case "processing":
-        return "bg-blue-100 text-blue-800"
-      case "error":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  
 
   const getStatusIcon = (status: VideoSource["status"]) => {
     switch (status) {
@@ -166,29 +155,29 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Video className="h-5 w-5" />
           Video & YouTube Sources
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Add video files or YouTube URLs to extract audio and transcribe content using Whisper AI
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs defaultValue="youtube" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 dark:bg-gray-700">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
               value="youtube"
-              className="flex items-center gap-2 dark:data-[state=active]:bg-gray-600 dark:text-gray-300"
+              className="flex items-center gap-2"
             >
               <Youtube className="h-4 w-4" />
               YouTube
             </TabsTrigger>
             <TabsTrigger
               value="file"
-              className="flex items-center gap-2 dark:data-[state=active]:bg-gray-600 dark:text-gray-300"
+              className="flex items-center gap-2"
             >
               <FileVideo className="h-4 w-4" />
               Video File
@@ -202,13 +191,13 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
                 value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addYouTubeVideo()}
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                
               />
               <Button onClick={addYouTubeVideo} disabled={isProcessing}>
                 {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-xs text-gray-500">Supports YouTube videos, shorts, and playlists</p>
+            <p className="text-xs text-muted-foreground">Supports YouTube videos, shorts, and playlists</p>
           </TabsContent>
 
           <TabsContent value="file" className="space-y-4">
@@ -218,19 +207,19 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
                 value={videoFileUrl}
                 onChange={(e) => setVideoFileUrl(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addVideoFile()}
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                
               />
               <Button onClick={addVideoFile} disabled={isProcessing}>
                 {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-xs text-gray-500">Supports MP4, MKV, AVI, MOV, and other common video formats</p>
+            <p className="text-xs text-muted-foreground">Supports MP4, MKV, AVI, MOV, and other common video formats</p>
           </TabsContent>
         </Tabs>
 
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
           {videos.map((video) => (
-            <div key={video.id} className="border rounded-lg p-3 space-y-2 dark:border-gray-600 dark:bg-gray-700/50">
+            <div key={video.id} className="border rounded-lg p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {video.type === "youtube" ? (
@@ -238,7 +227,7 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
                   ) : (
                     <FileVideo className="h-4 w-4 text-blue-500" />
                   )}
-                  <span className="text-sm font-medium truncate max-w-xs dark:text-gray-200">
+                  <span className="text-sm font-medium truncate max-w-xs">
                     {video.title || video.url}
                   </span>
                   {video.duration && (
@@ -248,7 +237,7 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className={`text-xs flex items-center gap-1 ${getStatusColor(video.status)}`}>
+                  <Badge variant={video.status === 'error' ? 'destructive' : 'secondary'} className="text-xs flex items-center gap-1">
                     {getStatusIcon(video.status)}
                     {video.status}
                   </Badge>
@@ -268,8 +257,8 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
 
               {video.transcription && (
                 <div className="bg-gray-50 p-2 rounded text-xs">
-                  <p className="text-gray-600 mb-1 dark:text-gray-400">Transcription Preview:</p>
-                  <p className="line-clamp-2 dark:text-gray-300">{video.transcription.slice(0, 200)}...</p>
+                  <p className="text-muted-foreground mb-1">Transcription Preview:</p>
+                  <p className="line-clamp-2">{video.transcription.slice(0, 200)}...</p>
                 </div>
               )}
             </div>
@@ -277,10 +266,10 @@ export function VideoProcessor({ videos, onVideosChange }: VideoProcessorProps) 
         </div>
 
         {videos.length === 0 && (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-8 text-muted-foreground">
             <Video className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p className="dark:text-gray-400">No videos added yet</p>
-            <p className="text-xs dark:text-gray-500">Add YouTube URLs or video file links to get started</p>
+            <p>No videos added yet</p>
+            <p className="text-xs text-muted-foreground">Add YouTube URLs or video file links to get started</p>
           </div>
         )}
       </CardContent>

@@ -43,13 +43,13 @@ export function LibraryAnalyzer({ libraries, onLibrariesChange }: LibraryAnalyze
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Code className="h-5 w-5" />
           Library Understanding
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Analyze libraries and their functionalities for better LLM integration
         </CardDescription>
       </CardHeader>
@@ -60,18 +60,18 @@ export function LibraryAnalyzer({ libraries, onLibrariesChange }: LibraryAnalyze
             value={newLibrary}
             onChange={(e) => setNewLibrary(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && addLibrary()}
-            className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            
           />
           <Button onClick={addLibrary} disabled={isAnalyzing}>
             {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-2">
           {libraries.map((library, index) => (
             <Badge
               key={index}
               variant="secondary"
-              className="flex items-center gap-1 dark:bg-gray-700 dark:text-gray-300"
+              className="flex items-center gap-1"
             >
               {library}
               <X className="h-3 w-3 cursor-pointer" onClick={() => removeLibrary(index)} />

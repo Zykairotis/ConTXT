@@ -28,13 +28,13 @@ export function FileUpload({ files, onFilesChange }: FileUploadProps) {
   const supportedFormats = ["JSON", "PDF", "HTML", "TXT", "MD", "PNG", "JPG", "JPEG"]
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
           File Integration
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Upload files in various formats (JSON, PDF, HTML, images) for content extraction
         </CardDescription>
       </CardHeader>
@@ -50,16 +50,16 @@ export function FileUpload({ files, onFilesChange }: FileUploadProps) {
         <Button
           onClick={() => fileInputRef.current?.click()}
           variant="outline"
-          className="w-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="w-full"
         >
           <Upload className="h-4 w-4 mr-2" />
           Upload Files
         </Button>
-        <div className="text-xs text-gray-500 dark:text-gray-400">Supported: {supportedFormats.join(", ")}</div>
-        <div className="space-y-2">
+        <div className="text-xs text-muted-foreground">Supported: {supportedFormats.join(", ")}</div>
+        <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
           {files.map((file, index) => (
-            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded dark:bg-gray-700">
-              <span className="text-sm truncate dark:text-gray-300">{file.name}</span>
+            <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+              <span className="text-sm truncate">{file.name}</span>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
                   {file.type || "Unknown"}

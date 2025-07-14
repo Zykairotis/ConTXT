@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { WebUrlInput } from "@/components/web-url-input"
 import { FileUpload } from "@/components/file-upload"
-import { ChatLogProcessor } from "@/components/chat-log-processor"
 import { LibraryAnalyzer } from "@/components/library-analyzer"
 import { SystemPromptGenerator } from "@/components/system-prompt-generator"
 import { ProjectContextBuilder } from "@/components/project-context-builder"
@@ -16,11 +15,12 @@ import { Brain, Globe, FileText, MessageSquare, Code, Settings, Eye, Video } fro
 import { Textarea } from "@/components/ui/textarea"
 import { VideoProcessor } from "@/components/video-processor"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SourceDetailModal } from "@/components/source-detail-modal"
+import { ClientOnly } from "@/components/client-only"
 
 interface ContextData {
   webUrls: string[]
   files: File[]
-  chatLogs: any[]
   libraries: string[]
   videos: any[]
   systemPrompt: string
@@ -33,7 +33,6 @@ export default function LLMContextBuilder() {
   const [contextData, setContextData] = useState<ContextData>({
     webUrls: [],
     files: [],
-    chatLogs: [],
     libraries: [],
     videos: [],
     systemPrompt: "",
@@ -47,6 +46,15 @@ export default function LLMContextBuilder() {
   const [builtContext, setBuiltContext] = useState<string>("")
   const [originalText, setOriginalText] = useState("")
   const [improvedText, setImprovedText] = useState("")
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  type SourceType = 'webUrls' | 'files' | 'videos' | 'libraries';
+
+  const [modalContent, setModalContent] = useState<{ title: string; sources: any[]; sourceType: SourceType }>({
+    title: "",
+    sources: [],
+    sourceType: 'webUrls',
+  })
 
   const handleBuildContext = async () => {
     setIsBuilding(true)
@@ -75,13 +83,19 @@ export default function LLMContextBuilder() {
     setContextData((prev) => ({ ...prev, [key]: value }))
   }
 
+  const openModal = (title: string, sources: any[], sourceType: SourceType) => {
+    setModalContent({ title, sources, sourceType })
+    setIsModalOpen(true)
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4 transition-all duration-300">
+    <ClientOnly>
+      <div className="min-h-screen bg-background p-4 transition-all duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-start mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
-              <Brain className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <Brain className="h-8 w-8 text-primary" />
               LLM Context Builder
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -93,38 +107,31 @@ export default function LLMContextBuilder() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => openModal("Web URLs", contextData.webUrls, 'webUrls')}>
             <CardContent className="p-4 text-center">
-              <Globe className="h-8 w-8 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
+              <Globe className="h-8 w-8 text-blue-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-foreground">{contextData.webUrls.length}</div>
               <div className="text-sm text-muted-foreground">Web URLs</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => openModal("Files", contextData.files, 'files')}>
             <CardContent className="p-4 text-center">
-              <FileText className="h-8 w-8 text-green-500 dark:text-green-400 mx-auto mb-2" />
+              <FileText className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-foreground">{contextData.files.length}</div>
               <div className="text-sm text-muted-foreground">Files</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => openModal("Videos", contextData.videos.map(v => v.source), 'videos')}>
             <CardContent className="p-4 text-center">
-              <MessageSquare className="h-8 w-8 text-purple-500 dark:text-purple-400 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">{contextData.chatLogs.length}</div>
-              <div className="text-sm text-muted-foreground">Chat Logs</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <Video className="h-8 w-8 text-red-500 dark:text-red-400 mx-auto mb-2" />
+              <Video className="h-8 w-8 text-red-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-foreground">{contextData.videos.length}</div>
               <div className="text-sm text-muted-foreground">Videos</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => openModal("Libraries", contextData.libraries, 'libraries')}>
             <CardContent className="p-4 text-center">
-              <Code className="h-8 w-8 text-orange-500 dark:text-orange-400 mx-auto mb-2" />
+              <Code className="h-8 w-8 text-orange-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-foreground">{contextData.libraries.length}</div>
               <div className="text-sm text-muted-foreground">Libraries</div>
             </CardContent>
@@ -144,10 +151,6 @@ export default function LLMContextBuilder() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <WebUrlInput urls={contextData.webUrls} onUrlsChange={(urls) => updateContextData("webUrls", urls)} />
               <FileUpload files={contextData.files} onFilesChange={(files) => updateContextData("files", files)} />
-              <ChatLogProcessor
-                chatLogs={contextData.chatLogs}
-                onChatLogsChange={(logs) => updateContextData("chatLogs", logs)}
-              />
               <LibraryAnalyzer
                 libraries={contextData.libraries}
                 onLibrariesChange={(libs) => updateContextData("libraries", libs)}
@@ -257,6 +260,14 @@ export default function LLMContextBuilder() {
           </TabsContent>
         </Tabs>
       </div>
+      <SourceDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={modalContent.title}
+        sources={modalContent.sources}
+        sourceType={modalContent.sourceType}
+      />
     </div>
+    </ClientOnly>
   )
 }

@@ -43,19 +43,19 @@ export function ProjectContextBuilder({
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Lightbulb className="h-5 w-5" />
           Project Context & Configuration
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Define project context, rules, and MCP tool requirements
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="text-sm font-medium mb-2 block dark:text-gray-300">Project Context</label>
+          <label className="text-sm font-medium mb-2 block">Project Context</label>
           <Textarea
             placeholder="Describe your project goals, scope, and intended functionality..."
             value={context}
@@ -63,19 +63,19 @@ export function ProjectContextBuilder({
             rows={4}
             showImproveButton={true}
             onImprove={(improvedText) => onContextChange(improvedText)}
-            className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block dark:text-gray-300">Rules & Constraints</label>
+          <label className="text-sm font-medium mb-2 block">Rules & Constraints</label>
           <div className="flex gap-2 mb-2">
             <Input
               placeholder="Add a rule or constraint..."
               value={newRule}
               onChange={(e) => setNewRule(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addRule()}
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              
             />
             <Button onClick={addRule} size="sm">
               <Plus className="h-4 w-4" />
@@ -86,7 +86,7 @@ export function ProjectContextBuilder({
               <Badge
                 key={index}
                 variant="outline"
-                className="flex items-center gap-1 dark:border-gray-600 dark:text-gray-300"
+                className="flex items-center gap-1"
               >
                 {rule}
                 <X
@@ -99,14 +99,14 @@ export function ProjectContextBuilder({
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block dark:text-gray-300">MCP Tools Requirements</label>
+          <label className="text-sm font-medium mb-2 block">MCP Tools Requirements</label>
           <div className="flex gap-2 mb-2">
             <Input
               placeholder="cursor, gemini-cli, windsurf..."
               value={newTool}
               onChange={(e) => setNewTool(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addTool()}
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              
             />
             <Button onClick={addTool} size="sm">
               <Plus className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function ProjectContextBuilder({
               <Badge
                 key={index}
                 variant="secondary"
-                className="flex items-center gap-1 dark:bg-gray-700 dark:text-gray-300"
+                className="flex items-center gap-1"
               >
                 {tool}
                 <X

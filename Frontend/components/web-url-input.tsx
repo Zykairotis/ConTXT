@@ -43,13 +43,13 @@ export function WebUrlInput({ urls, onUrlsChange }: WebUrlInputProps) {
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Globe className="h-5 w-5" />
           Web URLs
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Add web URLs to extract content and enrich the LLM's knowledge base
         </CardDescription>
       </CardHeader>
@@ -60,18 +60,18 @@ export function WebUrlInput({ urls, onUrlsChange }: WebUrlInputProps) {
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && addUrl()}
-            className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            
           />
           <Button onClick={addUrl} disabled={isProcessing}>
             {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-2">
           {urls.map((url, index) => (
             <Badge
               key={index}
               variant="secondary"
-              className="flex items-center gap-1 dark:bg-gray-700 dark:text-gray-300"
+              className="flex items-center gap-1"
             >
               {url}
               <X className="h-3 w-3 cursor-pointer" onClick={() => removeUrl(index)} />

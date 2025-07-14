@@ -4,3 +4,6 @@ GEMINI.md
 BACKEND.md
 FRONTEND.md
 .gitignore
+.aider*
+.cursor*
+.windsurf*

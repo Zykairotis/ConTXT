@@ -25,13 +25,13 @@ export function ContextViewer({ context }: ContextViewerProps) {
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Database className="h-5 w-5" />
           Generated Context
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Comprehensive context built from all data sources for your LLM
         </CardDescription>
       </CardHeader>
@@ -41,7 +41,7 @@ export function ContextViewer({ context }: ContextViewerProps) {
             onClick={copyToClipboard}
             variant="outline"
             size="sm"
-            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 bg-transparent"
+            className="bg-transparent"
           >
             <Copy className="h-4 w-4 mr-2" />
             Copy
@@ -50,7 +50,7 @@ export function ContextViewer({ context }: ContextViewerProps) {
             onClick={downloadContext}
             variant="outline"
             size="sm"
-            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 bg-transparent"
+            className="bg-transparent"
           >
             <Download className="h-4 w-4 mr-2" />
             Download
@@ -60,7 +60,7 @@ export function ContextViewer({ context }: ContextViewerProps) {
           value={context}
           readOnly
           rows={20}
-          className="font-mono text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+          className="font-mono text-sm"
           placeholder="Built context will appear here..."
         />
       </CardContent>

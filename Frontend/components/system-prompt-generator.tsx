@@ -28,13 +28,13 @@ export function SystemPromptGenerator({ prompt, onPromptChange }: SystemPromptGe
   }
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 dark:text-white">
+        <CardTitle className="flex items-center gap-2">
           <Settings className="h-5 w-5" />
           System Prompt Generation
         </CardTitle>
-        <CardDescription className="dark:text-gray-400">
+        <CardDescription>
           Generate tailored system prompts to guide the LLM's behavior and output format
         </CardDescription>
       </CardHeader>
@@ -42,7 +42,7 @@ export function SystemPromptGenerator({ prompt, onPromptChange }: SystemPromptGe
         <Button
           onClick={generatePrompt}
           variant="outline"
-          className="w-full bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="w-full bg-transparent"
         >
           <Wand2 className="h-4 w-4 mr-2" />
           Generate System Prompt
@@ -54,7 +54,7 @@ export function SystemPromptGenerator({ prompt, onPromptChange }: SystemPromptGe
           rows={8}
           showImproveButton={true}
           onImprove={(improvedText) => onPromptChange(improvedText)}
-          className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          
         />
       </CardContent>
     </Card>
