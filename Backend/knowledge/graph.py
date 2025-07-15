@@ -31,6 +31,24 @@ class KnowledgeGraphManager:
         """
         return self.driver.session(database=settings.NEO4J_DATABASE)
     
+    async def initialize_schema(self):
+        """
+        Initialize the Neo4j schema with indexes and constraints.
+        """
+        async with await self.get_session() as session:
+            # Create unique constraint for entity IDs
+            await session.run(
+                "CREATE CONSTRAINT IF NOT EXISTS FOR (e:Entity) REQUIRE e.id IS UNIQUE"
+            )
+            # Create index for entity types
+            await session.run(
+                "CREATE INDEX IF NOT EXISTS FOR (e:Entity) ON (e.type)"
+            )
+            # Create index for relationships
+            await session.run(
+                "CREATE INDEX IF NOT EXISTS FOR ()-[r:RELATES_TO]-() ON (r.type)"
+            )
+    
     async def create_entity(
         self, entity_type: str, properties: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -44,13 +62,17 @@ class KnowledgeGraphManager:
         Returns:
             Dict[str, Any]: The created entity.
         """
-        async with await self.get_session() as session:
-            result = await session.run(
-                f"CREATE (e:{entity_type} $properties) RETURN e",
-                properties=properties,
-            )
-            record = await result.single()
-            return record["e"]
+        try:
+            async with await self.get_session() as session:
+                result = await session.run(
+                    f"CREATE (e:Entity {{type: $entity_type, properties: $properties}}) RETURN e",
+                    entity_type=entity_type,
+                    properties=properties,
+                )
+                record = await result.single()
+                return record["e"]
+        except Exception as e:
+            raise ValueError(f"Failed to create entity: {str(e)}")
     
     async def create_relationship(
         self,
@@ -75,13 +97,14 @@ class KnowledgeGraphManager:
         async with await self.get_session() as session:
             result = await session.run(
                 f"""
-                MATCH (a), (b)
-                WHERE id(a) = $from_id AND id(b) = $to_id
-                CREATE (a)-[r:{relationship_type} $properties]->(b)
+                MATCH (a:Entity), (b:Entity)
+                WHERE a.id = $from_id AND b.id = $to_id
+                CREATE (a)-[r:RELATES_TO {{type: $relationship_type, properties: $properties}}]->(b)
                 RETURN r
                 """,
                 from_id=from_entity_id,
                 to_id=to_entity_id,
+                relationship_type=relationship_type,
                 properties=properties,
             )
             record = await result.single()
@@ -101,4 +124,4 @@ class KnowledgeGraphManager:
         parameters = parameters or {}
         async with await self.get_session() as session:
             result = await session.run(cypher_query, parameters)
-            return [record.data() for record in await result.fetch_all()] 
+            return [record.data() async for record in result]
