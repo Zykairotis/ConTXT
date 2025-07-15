@@ -83,6 +83,7 @@ services:
       - NEO4J_dbms_memory_pagecache_size=1G
       - NEO4J_dbms.memory.heap.initial_size=1G
       - NEO4J_dbms_memory_heap_max__size=2G
+      - NEO4J_dbms_usage__report_enabled=false
 
   # Qdrant
   qdrant:
@@ -97,4 +98,4 @@ volumes:
   postgres_data:
   redis_data:
   neo4j_data:
-  qdrant_data: 
+  qdrant_data:
