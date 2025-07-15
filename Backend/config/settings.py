@@ -1,7 +1,7 @@
 """
 Configuration settings for the AI Context Builder backend.
 """
-from typing import List, Optional
+from typing import Dict, List, Optional, Any
 
 from pydantic import AnyHttpUrl, Field, PostgresDsn, RedisDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "production"
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:8000"
     
     # Database Connections
     # PostgreSQL
@@ -60,6 +60,25 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     ANTHROPIC_API_KEY: Optional[str] = None
     
+    # LLM Providers (for LiteLLM)
+    LITELLM_PROVIDERS: Dict[str, Dict[str, Any]] = Field(
+        default_factory=lambda: {
+            "openai": {
+                "api_key": None,  # Will be set from OPENAI_API_KEY
+                "chat_model": "gpt-4o",
+                "embedding_model": "text-embedding-3-large",
+            },
+            "anthropic": {
+                "api_key": None,  # Will be set from ANTHROPIC_API_KEY
+                "chat_model": "claude-3-5-sonnet-20241022",
+            },
+        },
+        description="Configurations for LiteLLM providers."
+    )
+    DEFAULT_CHAT_PROVIDER: str = "openai"
+    DEFAULT_EMBEDDING_PROVIDER: str = "openai"
+    DEFAULT_VOICE_PROVIDER: str = "openai"
+    
     # Celery Configuration
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
@@ -75,6 +94,19 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Set API keys from environment variables
+        if self.OPENAI_API_KEY:
+            self.LITELLM_PROVIDERS["openai"]["api_key"] = self.OPENAI_API_KEY
+        if self.ANTHROPIC_API_KEY:
+            self.LITELLM_PROVIDERS["anthropic"]["api_key"] = self.ANTHROPIC_API_KEY
+    
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Get CORS origins as a list."""
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
 
 # Create settings instance

@@ -11,15 +11,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN curl -sSf https://astral.sh/uv/install.sh | sh
-
 # Copy requirements and install dependencies
 COPY pyproject.toml .
 COPY README.md .
+COPY Backend/requirements.txt .
 
 # Install dependencies
-RUN uv pip install -e .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
 COPY . .
