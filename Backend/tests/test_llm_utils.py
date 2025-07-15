@@ -1,6 +1,7 @@
 """
 Tests for the LiteLLM utility functions.
 """
+import sys
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 
@@ -120,8 +121,12 @@ async def test_transcribe_audio(mock_settings):
     mock_client = MagicMock()
     mock_client.audio.transcriptions.create.return_value = mock_transcription
     
+    # Mock the openai import
+    mock_openai = MagicMock()
+    mock_openai.OpenAI.return_value = mock_client
+    
     with patch("Backend.utils.llm_utils.settings", mock_settings), \
-         patch("Backend.utils.llm_utils.openai.OpenAI", return_value=mock_client), \
+         patch.dict("sys.modules", {"openai": mock_openai}), \
          patch("builtins.open", MagicMock()):
         
         # Test with default parameters

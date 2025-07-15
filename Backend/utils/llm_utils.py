@@ -8,7 +8,7 @@ import logging
 from typing import Dict, List, Optional, Union, Any
 
 from litellm import acompletion, completion, embedding, aembedding
-from litellm.exceptions import LiteLLMError, RateLimitError, ServiceUnavailableError
+from litellm.exceptions import APIError, RateLimitError, ServiceUnavailableError
 
 from Backend.config.settings import settings
 
@@ -42,7 +42,7 @@ async def generate_chat_response(
         
     Raises:
         ValueError: If the provider is not configured
-        LiteLLMError: If there's an error with the LLM call
+        APIError: If there's an error with the LLM API call
     """
     provider = provider or settings.DEFAULT_CHAT_PROVIDER
     provider_config = settings.LITELLM_PROVIDERS.get(provider)
@@ -86,8 +86,8 @@ async def generate_chat_response(
                 **kwargs
             )
         raise
-    except LiteLLMError as e:
-        logger.error(f"LiteLLM error: {str(e)}")
+    except APIError as e:
+        logger.error(f"LiteLLM API error: {str(e)}")
         raise
 
 async def generate_embedding(
@@ -110,7 +110,7 @@ async def generate_embedding(
         
     Raises:
         ValueError: If the provider is not configured
-        LiteLLMError: If there's an error with the LLM call
+        APIError: If there's an error with the LLM API call
     """
     provider = provider or settings.DEFAULT_EMBEDDING_PROVIDER
     provider_config = settings.LITELLM_PROVIDERS.get(provider)
@@ -143,8 +143,8 @@ async def generate_embedding(
                 **kwargs
             )
         raise
-    except LiteLLMError as e:
-        logger.error(f"LiteLLM error: {str(e)}")
+    except APIError as e:
+        logger.error(f"LiteLLM API error: {str(e)}")
         raise
 
 async def transcribe_audio(
@@ -167,7 +167,7 @@ async def transcribe_audio(
         
     Raises:
         ValueError: If the provider is not configured
-        LiteLLMError: If there's an error with the LLM call
+        APIError: If there's an error with the LLM API call
     """
     provider = provider or settings.DEFAULT_VOICE_PROVIDER
     provider_config = settings.LITELLM_PROVIDERS.get(provider)
