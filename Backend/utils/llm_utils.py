@@ -199,4 +199,4 @@ async def transcribe_audio(
             return f"Audio transcription with {provider} not implemented"
     except Exception as e:
         logger.error(f"Error transcribing audio: {str(e)}")
-        raise 
+        raise

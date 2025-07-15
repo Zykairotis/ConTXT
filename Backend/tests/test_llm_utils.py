@@ -134,4 +134,4 @@ async def test_transcribe_audio(mock_settings):
         assert result == "This is a test transcription"
         
         # Verify OpenAI client was called correctly
-        mock_client.audio.transcriptions.create.assert_called_once() 
+        mock_client.audio.transcriptions.create.assert_called_once()

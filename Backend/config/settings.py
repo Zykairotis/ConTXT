@@ -70,10 +70,30 @@ class Settings(BaseSettings):
                 "api_key": None,  # Will be set from OPENAI_API_KEY
                 "chat_model": "gpt-4o",
                 "embedding_model": "text-embedding-3-large",
+                "voice_transcription_model": "whisper-1",
             },
             "anthropic": {
                 "api_key": None,  # Will be set from ANTHROPIC_API_KEY
                 "chat_model": "claude-3-5-sonnet-20241022",
+            },
+            "xai": {
+                "api_key": None,  # Will be set from XAI_API_KEY
+                "chat_model": "xai-model-name",
+            },
+            "ollama": {
+                "api_base": "http://localhost:11434",
+                "chat_model": "llama3",
+                "embedding_model": "nomic-embed-text",
+            },
+            "huggingface": {
+                "api_key": None,  # Will be set from HF_API_KEY
+                "chat_model": "HuggingFaceH4/zephyr-7b-beta",
+                "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+            },
+            "custom_voice_api": {
+                "api_base": None,  # Will be set from CUSTOM_VOICE_API_BASE
+                "api_key": None,  # Will be set from CUSTOM_VOICE_API_KEY
+                "voice_transcription_model": "your-custom-transcription-model",
             },
         },
         description="Configurations for LiteLLM providers."
