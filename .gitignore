@@ -6,8 +6,8 @@ GEMINI.md
 .aider*
 .cursor*
 .windsurf*
-
-
+.gemini*
+.taskmaster*
 # Logs
 *.log
 # Dependency directories
