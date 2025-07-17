@@ -1,0 +1,33 @@
+/* Popup styles */
+#status-container {
+  margin-top: 16px;
+}
+
+.status {
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: none;
+}
+
+.status.success {
+  background-color: #e6f4ea;
+  color: #137333;
+  display: block;
+}
+
+.status.error {
+  background-color: #fce8e6;
+  color: #c5221f;
+  display: block;
+}
+
+.file-upload.active {
+  border-color: #4285f4;
+  background-color: #e8f0fe;
+}
+
+.capture-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+} 

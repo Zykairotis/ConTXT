@@ -40,6 +40,30 @@ Research highlights that context engineering has evolved beyond prompt engineeri
 - **Extension Strategy**: Tutorials (Medium/YouTube) show FastAPI + LangGraph for agents: Add graph-based routes to existing API, enabling stateful context curation.
 - **Market Gap**: Tools like AnythingLLM bundle RAG/agents in Docker, but lack deep CE focus; our agent fills this with "slow and steady" steps, inspired by DSPy's programming-over-prompting.
 
+## 2.5. Browser Extension for Enhanced Context Capturing
+
+### Vision
+To bridge the gap between web-based research and the AI Context Engineering Agent, a browser extension for Chrome and Firefox will be developed. This extension will act as a seamless data ingestion tool, allowing users to send web content directly to the agent for processing and integration into the project's knowledge base.
+
+### Core Functionality
+The extension will provide a user-friendly interface to capture and process a wide variety of web content, including:
+
+*   **File Processing:**
+    *   PDFs
+    *   Images (PNG, JPG)
+    *   Structured Data (JSON, CSV, XML)
+    *   Documents (HTML, Markdown)
+*   **Web Content Capturing:**
+    *   Full and partial webpage screenshots.
+    *   Extraction of specific HTML elements.
+    *   Capturing chat conversations from platforms like Gemini, Claude, ChatGPT, and Grok.
+    *   Processing of URLs to extract the main content.
+
+### Technical Approach
+*   **Cross-Browser Compatibility:** The extension will be built using web extension APIs to ensure compatibility with both Chrome and Firefox.
+*   **Backend Integration:** The extension will communicate with the existing FastAPI backend to send the captured data for processing. The same ingestion endpoints used by the main application will be leveraged.
+*   **User Interface:** A simple popup will allow users to select the type of content they want to capture and send to the agent.
+
 ## 3. Product Vision and Goals (Refined)
 
 ### Vision Statement
