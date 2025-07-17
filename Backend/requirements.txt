@@ -1,28 +1,42 @@
 # Core dependencies
-fastapi==0.104.1
-uvicorn==0.24.0
-python-dotenv==1.0.0
-pydantic==2.4.2
-httpx==0.25.0
+fastapi>=0.104.1
+uvicorn>=0.24.0
+python-dotenv>=1.0.0
+pydantic>=2.4.2
+httpx>=0.25.0
+
+# Background task processing
+celery>=5.3.4
+redis>=5.0.1
+flower>=2.0.1
 
 # LangGraph and LLM utilities
-langgraph==0.1.11
-litellm==1.9.1
-langchain==0.0.335
-langchain-community==0.0.13
+langgraph>=0.1.11
+langchain-core>=0.2.22
+langchain>=0.0.335
+langchain-community>=0.0.27
 
 # Vector database clients
-qdrant-client==1.6.4
-neo4j==5.13.0
+qdrant-client>=1.6.4
+neo4j>=5.13.0
 
 # Data processing
-numpy==1.26.1
-pandas==2.1.2
+numpy>=1.26.1
+pandas>=2.1.2
 
 # Async support
-asyncio==3.4.3
-aiohttp==3.8.6
+asyncio>=3.4.3
+aiohttp>=3.8.6
+
+# Document processing
+Pillow>=10.1.0  # Image processing
+pytesseract>=0.3.10  # OCR for images
+PyMuPDF>=1.23.7  # PDF processing (fitz)
+pdfminer.six>=20221105  # Alternative PDF processing
+beautifulsoup4>=4.12.2  # HTML processing
+html2text>=2020.1.16  # HTML to text conversion
+pygments>=2.16.1  # Syntax highlighting for code
 
 # Testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
+pytest>=7.4.3
+pytest-asyncio>=0.21.1

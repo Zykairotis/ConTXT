@@ -1,142 +1,123 @@
-# AI Context Engineering Agent Backend
+# ConTXT - AI Context Engineering Agent Backend
 
-This is the backend service for the AI Context Engineering Agent, which provides context engineering capabilities for AI-assisted software development.
+The backend component of the ConTXT application, providing APIs for document processing, knowledge extraction, and context engineering.
 
-## Overview
+## Docker Setup
 
-The AI Context Engineering Agent backend is built with:
+This project is fully containerized using Docker for easy deployment and development. The Docker configuration includes:
 
-- **FastAPI**: High-performance API framework
-- **LangGraph**: Workflow orchestration for context engineering
-- **Neo4j**: Graph database for knowledge representation
-- **Qdrant**: Vector database for embeddings and semantic search
-
-## Quick Start
+- FastAPI application container
+- Neo4j graph database
+- Qdrant vector database
+- PostgreSQL relational database
+- Redis cache
+- Celery worker for background processing (optional)
+- Flower for monitoring Celery tasks (optional)
 
 ### Prerequisites
 
-- Python 3.11+
-- Docker and Docker Compose
+- Docker and Docker Compose installed
+- API keys for LLM services (xAI, OpenAI, etc.)
 
-### Setup
+### Getting Started
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd ConTXT
-   ```
+1. Create a `.env` file in the Backend directory with your configuration (see `.env.example` for reference):
 
-2. Create a virtual environment (using uv):
-   ```bash
-   uv venv
-   source .venv/bin/activate
-   ```
+```bash
+# Minimal example .env file
+XAI_API_KEY=your-xai-api-key-here
+OPENAI_API_KEY=your-openai-api-key-here
+```
 
-3. Install dependencies:
-   ```bash
-   cd Backend
-   pip install -r requirements.txt
-   ```
+2. Start the Docker containers:
 
-4. Create a `.env` file in the `Backend` directory:
-   ```
-   # API Configuration
-   API_V1_STR=/api/v1
-   PROJECT_NAME=AI Context Engineering Agent
-   CORS_ORIGINS=http://localhost:3000,http://localhost:8000
+```bash
+# Navigate to the Backend directory
+cd Backend
 
-   # Neo4j Configuration
-   NEO4J_HOST=localhost  # Use 'neo4j' when running inside Docker
-   NEO4J_PORT=7687
-   NEO4J_USER=neo4j
-   NEO4J_PASSWORD=password
+# Start with helper script
+./scripts/docker_start.sh
 
-   # Qdrant Configuration
-   QDRANT_HOST=localhost  # Use 'qdrant' when running inside Docker
-   QDRANT_PORT=6333
-   QDRANT_COLLECTION=context_vectors
+# Or manually with docker-compose
+docker-compose up -d
+```
 
-   # LLM Configuration
-   OPENAI_API_KEY=your_openai_api_key_here
-   ANTHROPIC_API_KEY=your_anthropic_api_key_here
-   DEFAULT_LLM_MODEL=gpt-4o
-   ```
+3. The following services will be available:
 
-5. Start the database services:
-   ```bash
-   ./start_services.sh
-   ```
-   or manually:
-   ```bash
-   docker compose up -d
-   ```
+- **API Documentation**: http://localhost:8000/docs
+- **Neo4j Browser**: http://localhost:7474 (neo4j/password)
+- **Qdrant Dashboard**: http://localhost:6333/dashboard
+- **Celery Flower** (if enabled): http://localhost:5555
 
-6. Test database connections:
-   ```bash
-   ./test_local.sh
-   ```
-   or manually:
-   ```bash
-   export NEO4J_HOST=localhost
-   export QDRANT_HOST=localhost
-   python test_connections.py
-   ```
+### Testing the System
 
-7. Run the application:
-   ```bash
-   python run.py
-   ```
+A comprehensive test script is provided to verify your setup:
 
-8. Access the API documentation at http://localhost:8000/docs
+```bash
+# Install requests library if not present
+pip install requests
 
-## Environment Configuration
+# Run the test script
+cd Backend
+./scripts/test_docker_system.py
+```
 
-The application supports two environments:
+The test script will:
+1. Check if the API is responding
+2. Test database connections
+3. Create test files
+4. Upload files to the system
+5. Wait for processing
+6. Query the processed data
 
-### Local Development (Default)
+### Development Workflow
 
-When running the application locally but using Docker for databases:
-- Set `NEO4J_HOST=localhost` and `QDRANT_HOST=localhost` in your `.env` file
-- Use `./test_local.sh` to run tests
+For development with hot-reloading:
 
-### Docker Environment
+```bash
+# Start only databases
+docker-compose up neo4j qdrant postgres redis
 
-When running the application inside Docker:
-- Set `NEO4J_HOST=neo4j` and `QDRANT_HOST=qdrant` in your `.env` file
-- Use Docker networking to connect to services
+# Run the app locally
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-## Services
+### Stopping the System
 
-### Neo4j
+To stop the system:
 
-- **Purpose**: Graph database for knowledge representation
-- **Access**: http://localhost:7474 (Browser interface)
-- **Credentials**: neo4j / password
+```bash
+# Use the helper script
+./scripts/docker_stop.sh
 
-### Qdrant
+# Or manually
+docker-compose down
+```
 
-- **Purpose**: Vector database for embeddings
-- **Access**: http://localhost:6333/dashboard (Web dashboard)
-- **API**: http://localhost:6333 (REST API)
+To stop and remove all data volumes:
+
+```bash
+docker-compose down -v
+```
 
 ## API Endpoints
 
-### Context Engineering
+### Ingestion API
 
-- `POST /api/context/build`: Build engineered context from sources
-- `POST /api/context/generate-system-prompt`: Generate system prompts
+- `POST /api/ingestion/upload`: Upload a document
+- `POST /api/ingestion/url`: Process a URL
+- `GET /api/ingestion/{job_id}`: Get status of ingestion job
 
-### Knowledge Graph
+### Context API
 
-- `POST /api/knowledge/query`: Query the knowledge graph
-- `POST /api/knowledge/entity`: Add an entity to the graph
-- `POST /api/knowledge/relationship`: Add a relationship to the graph
+- `POST /api/context/build`: Build context from sources
+- `GET /api/context/{context_id}`: Get context by ID
+- `DELETE /api/context/{context_id}`: Delete context
 
-### Ingestion
+### Knowledge API
 
-- `POST /api/ingestion/url`: Ingest content from a URL
-- `POST /api/ingestion/file`: Ingest content from a file
-- `POST /api/ingestion/text`: Ingest raw text content
+- `POST /api/knowledge/search`: Search knowledge graph
+- `POST /api/knowledge/query`: Execute knowledge graph query
 
 ## Development
 
@@ -145,25 +126,48 @@ When running the application inside Docker:
 ```
 Backend/
 ├── app/
-│   ├── api/              # API routes and endpoints
+│   ├── api/              # API endpoints
+│   ├── config/           # Configuration
 │   ├── core/             # Core business logic
 │   ├── db/               # Database clients
 │   ├── models/           # Data models
-│   ├── processors/       # Data processors
+│   ├── processors/       # Document processors
 │   ├── schemas/          # Pydantic schemas
-│   └── utils/            # Utility functions
-├── docker-compose.yml    # Docker services configuration
-├── Dockerfile            # Docker build configuration
-├── requirements.txt      # Python dependencies
-├── run.py                # Entry point
-├── test_connections.py   # Database connection test
-├── test_local.sh         # Script for testing local connections
-└── start_services.sh     # Script to start Docker services
+│   └── utils/            # Utilities
+├── scripts/              # Helper scripts
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile            # Docker configuration
+└── requirements.txt      # Python dependencies
 ```
 
-### Adding New Features
+### Running Tests
 
-1. Define schemas in `app/schemas/`
-2. Implement core logic in `app/core/`
-3. Create API endpoints in `app/api/endpoints/`
-4. Register routes in `app/api/router.py` 
+```bash
+# Run all tests
+pytest
+
+# Run specific test
+pytest tests/test_ingestion.py
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Services not starting**: Check Docker logs and ensure all environment variables are set
+   ```bash
+   docker-compose logs app
+   ```
+
+2. **Database connection errors**: Verify database containers are running and accessible
+   ```bash
+   docker-compose ps
+   python -m Backend.test_connections
+   ```
+
+3. **File upload failures**: Check file permissions and upload directory exists
+   ```bash
+   docker-compose exec app ls -la /app/uploads
+   ```
+
+4. **Memory issues**: Increase Docker memory limits or adjust database configurations in docker-compose.yml 

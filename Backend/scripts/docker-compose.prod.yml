@@ -1,0 +1,111 @@
+version: '3.8'
+
+# Production overrides for docker-compose.yml
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  # Production configuration for app
+  app:
+    restart: always
+    environment:
+      # Disable development/debug settings
+      - DEBUG=false
+      - LOG_LEVEL=warning
+      # CORS settings for production
+      - CORS_ORIGINS=["https://your-production-domain.com"]
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    # Use build arguments for production
+    build:
+      context: .
+      args:
+        - ENVIRONMENT=production
+    # Disable volume mount of source code
+    volumes:
+      - ./uploads:/app/uploads
+      - ./processed:/app/processed
+      - ./logs:/app/logs
+    # No code reload in production
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  # Production configuration for neo4j
+  neo4j:
+    restart: always
+    environment:
+      - NEO4J_dbms_memory_pagecache_size=4G
+      - NEO4J_dbms.memory.heap.initial_size=4G
+      - NEO4J_dbms_memory_heap_max__size=8G
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 10G
+        reservations:
+          cpus: '1'
+          memory: 6G
+
+  # Production configuration for qdrant
+  qdrant:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # Production configuration for postgres
+  postgres:
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Production configuration for redis
+  redis:
+    restart: always
+    command: redis-server --maxmemory 1gb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  # Production configuration for worker
+  worker:
+    restart: always
+    command: celery -A app.core.worker worker --loglevel=warning --concurrency=4
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Production configuration for flower - OPTIONAL
+  flower:
+    restart: always
+    environment:
+      - FLOWER_BASIC_AUTH=${FLOWER_USER}:${FLOWER_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 512M 
